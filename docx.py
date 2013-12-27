@@ -430,6 +430,20 @@ def table(contents, heading=True, colw=None, cwunit='dxa', tblw=0,
         table.append(row)
     return table
 
+def slugify_with_ext(value):
+    """
+    Normalizes string, converts to lowercase, removes non-alpha characters,
+    and converts spaces to hyphens.
+    Based loosely on Django as described by S.Lott posted to 
+    http://stackoverflow.com/a/295466/527489
+    """
+    file_name, file_ext = os.path.splitext(value)
+    import unicodedata
+    file_name = unicodedata.normalize('NFKD', unicode(file_name)).encode('ascii', 'ignore')
+    file_name = unicode(re.sub('[^\w\s-]', '', file_name).strip().lower())
+    re.sub('[-\s]+', '-', file_name)
+    slug_plus_ext = ''.join((file_name, file_ext))
+    return slug_plus_ext
 
 def picture(
         relationshiplist, picname, picdescription, pixelwidth=None,
@@ -474,13 +488,13 @@ def picture(
 
         relationshiplist.append([
             'http://schemas.openxmlformats.org/officeDocument/2006/relations'
-            'hips/image', 'media/' + picname
+            'hips/image', 'media/' + slugify_with_ext(picname)
         ])
 
         media_dir = join(template_dir, 'word', 'media')
         if not os.path.isdir(media_dir):
             os.mkdir(media_dir)
-        shutil.copyfile(picname, join(media_dir, picname))
+        shutil.copyfile(picname, join(media_dir, slugify_with_ext(picname)))
 
     image = Image.open(picpath)
 

@@ -1,10 +1,8 @@
 .coverage
-dist
-*.docx
-/*.egg-info/
-MANIFEST
+/dist/
+/docs/.build/
+/*.egg-info
 *.pyc
-README.html
-_scratch
-template/word/media
-.tox
+_scratch/
+Session.vim
+/.tox/

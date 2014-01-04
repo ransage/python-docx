@@ -1,5 +1,6 @@
-include template/*
-include template/_rels/*
-include template/docProps/*
-include template/word/*
-include template/word/theme/*
+include HISTORY.rst LICENSE README.rst tox.ini
+include tests/*.py
+recursive-include features *
+recursive-include docx/templates *
+recursive-include tests/test_files *
+

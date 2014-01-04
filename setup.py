@@ -1,30 +1,72 @@
 #!/usr/bin/env python
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
-from glob import glob
+import os
+import re
 
-# Make data go into site-packages (http://tinyurl.com/site-pkg)
-from distutils.command.install import INSTALL_SCHEMES
-for scheme in INSTALL_SCHEMES.values():
-    scheme['data'] = scheme['purelib']
+from setuptools import find_packages, setup
 
-setup(name='docx',
-      version='0.2.1',
-      install_requires=['lxml', 'PIL'],
-      description='The docx module creates, reads and writes Microsoft Office Word 2007 docx files',
-      author='Mike MacCana',
-      author_email='python-docx@googlegroups.com',
-      maintainer='Steve Canny',
-      maintainer_email='python-docx@googlegroups.com',
-      url='http://github.com/mikemaccana/python-docx',
-      py_modules=['docx'],
-      data_files=[
-          ('docx-template/_rels', glob('template/_rels/.*')),
-          ('docx-template/docProps', glob('template/docProps/*.*')),
-          ('docx-template/word', glob('template/word/*.xml')),
-          ('docx-template/word/theme', glob('template/word/theme/*.*')),
-          ],
-      )
+# Read the version from docx.__version__ without importing the package
+# (and thus attempting to import packages it depends on that may not be
+# installed yet)
+thisdir = os.path.dirname(__file__)
+init_py = os.path.join(thisdir, 'docx', '__init__.py')
+version = re.search("__version__ = '([^']+)'", open(init_py).read()).group(1)
+license = os.path.join(thisdir, 'LICENSE')
+
+
+NAME = 'python-docx'
+VERSION = version
+DESCRIPTION = 'Create and update Microsoft Word .docx files.'
+KEYWORDS = 'docx office openxml word'
+AUTHOR = 'Steve Canny'
+AUTHOR_EMAIL = 'python-docx@googlegroups.com'
+URL = 'https://github.com/python-openxml/python-docx'
+LICENSE = open(license).read()
+PACKAGES = find_packages(exclude=['tests', 'tests.*'])
+PACKAGE_DATA = {'docx': ['templates/*']}
+
+INSTALL_REQUIRES = ['lxml>=2.3.2', 'Pillow>=2.0']
+TEST_SUITE = 'tests'
+TESTS_REQUIRE = ['behave', 'mock', 'pytest']
+
+CLASSIFIERS = [
+    'Development Status :: 3 - Alpha',
+    'Environment :: Console',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: MIT License',
+    'Operating System :: OS Independent',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 2.6',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.2',
+    'Programming Language :: Python :: 3.3',
+    'Topic :: Office/Business :: Office Suites',
+    'Topic :: Software Development :: Libraries'
+]
+
+readme = os.path.join(thisdir, 'README.rst')
+history = os.path.join(thisdir, 'HISTORY.rst')
+LONG_DESCRIPTION = open(readme).read() + '\n\n' + open(history).read()
+
+
+params = {
+    'name':             NAME,
+    'version':          VERSION,
+    'description':      DESCRIPTION,
+    'keywords':         KEYWORDS,
+    'long_description': LONG_DESCRIPTION,
+    'author':           AUTHOR,
+    'author_email':     AUTHOR_EMAIL,
+    'url':              URL,
+    'license':          LICENSE,
+    'packages':         PACKAGES,
+    'package_data':     PACKAGE_DATA,
+    'install_requires': INSTALL_REQUIRES,
+    'tests_require':    TESTS_REQUIRE,
+    'test_suite':       TEST_SUITE,
+    'classifiers':      CLASSIFIERS,
+}
+
+setup(**params)
